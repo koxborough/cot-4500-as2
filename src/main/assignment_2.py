@@ -69,6 +69,33 @@ def hermite_matrix(x_points, y_points, derivative):
 
     print(np.matrix(matrix))
 
+def cubic_spline_interpolation(x_points, y_points):
+    size = len(x_points)
+    matrix = np.zeros((size, size))
+    matrix[0][0] = matrix[size - 1][size - 1] = 1
+
+    for i in range(1, size - 1):
+        index = i - 1
+        for j in range(index, size, 2):
+            matrix[i][j] = x_points[index + 1] - x_points[index]
+            index += 1
+
+    for i in range(1, size - 1):
+        matrix[i][i] = 2 * ((x_points[i + 1] - x_points[i]) + (x_points[i] - x_points[i - 1]))
+
+    print(np.matrix(matrix))
+
+    spline_condition = np.zeros((size))
+
+    for i in range (1, size - 1):
+        first_term = (3 / (x_points[i + 1] - x_points[i])) * (y_points[i + 1] - y_points[i])
+        second_term = (3 / (x_points[i] - x_points[i - 1])) * (y_points[i] - y_points[i - 1])
+        spline_condition[i] = first_term - second_term
+
+    print(np.array(spline_condition))
+
+    print(np.array(np.linalg.solve(matrix, spline_condition)))
+
 # Task One: use Neville's method find 2nd degree interpolating value for f(3.7)
 nevilles_method([3.6, 3.8, 3.9], [1.675, 1.436, 1.318], 3.7)
 print()
@@ -85,3 +112,7 @@ print()
 
 # Task Four: print Hermite polynomial approximation matrix
 hermite_matrix([3.6, 3.8, 3.9], [1.675, 1.436, 1.318], [-1.195, -1.188, -1.182])
+print()
+
+# Task Five: solve following data set using cubic spline interpolation
+cubic_spline_interpolation([2, 5, 8, 10], [3, 5, 7, 9])
