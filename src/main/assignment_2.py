@@ -49,6 +49,26 @@ def get_approximate_result(matrix, x_points, value, start):
 
     print(reoccuring_px_result)
 
+def hermite_matrix(x_points, y_points, derivative):
+    size = 2 * len(x_points)
+    matrix = np.zeros((size, size + 1))
+
+    for i in range(size):
+        matrix[i][0] = x_points[i // 2]
+        matrix[i][1] = y_points[i // 2]
+
+    for i in range(1, size, 2):
+        matrix[i][2] = derivative[i // 2]
+
+    for i in range(2, size):
+        for j in range(2, i + 2):
+            if matrix[i][j] != 0.:
+                continue
+            
+            matrix[i][j] = (matrix[i][j - 1] - matrix[i - 1][j - 1]) / (matrix[i][0] - matrix[i - j + 1][0])
+
+    print(np.matrix(matrix))
+
 # Task One: use Neville's method find 2nd degree interpolating value for f(3.7)
 nevilles_method([3.6, 3.8, 3.9], [1.675, 1.436, 1.318], 3.7)
 print()
@@ -60,4 +80,8 @@ divided_table = divided_difference_table(x_points, y_points)
 print()
 
 # Task Three: use the results from Task Two to approximate f(7.3)
-final_approximation = get_approximate_result(divided_table, x_points, 7.3, y_points[0])
+get_approximate_result(divided_table, x_points, 7.3, y_points[0])
+print()
+
+# Task Four: print Hermite polynomial approximation matrix
+hermite_matrix([3.6, 3.8, 3.9], [1.675, 1.436, 1.318], [-1.195, -1.188, -1.182])
