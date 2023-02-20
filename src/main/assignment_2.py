@@ -30,6 +30,25 @@ def divided_difference_table(x_points, y_points):
 
     return matrix
 
+def get_approximate_result(matrix, x_points, value, start):
+    reoccuring_x_span = 1
+    reoccuring_px_result = start
+    
+    # we only need the diagonals...and that starts at the first row...
+    for index in range(1, len(matrix)):
+        polynomial_coefficient = matrix[index][index]
+
+        # we use the previous index for x_points....
+        reoccuring_x_span *= (value - x_points[index - 1])
+        
+        # get a_of_x * the x_span
+        mult_operation = polynomial_coefficient * reoccuring_x_span
+
+        # add the reoccuring px result
+        reoccuring_px_result += mult_operation
+
+    print(reoccuring_px_result)
+
 # Task One: use Neville's method find 2nd degree interpolating value for f(3.7)
 nevilles_method([3.6, 3.8, 3.9], [1.675, 1.436, 1.318], 3.7)
 print()
@@ -37,4 +56,8 @@ print()
 # Task Two: print polynomial approximations for degrees 1, 2, 3
 x_points = [7.2, 7.4, 7.5, 7.6]
 y_points = [23.5492, 25.3913, 26.8224, 27.4589]
-matrix = divided_difference_table(x_points, y_points)
+divided_table = divided_difference_table(x_points, y_points)
+print()
+
+# Task Three: use the results from Task Two to approximate f(7.3)
+final_approximation = get_approximate_result(divided_table, x_points, 7.3, y_points[0])
