@@ -1,4 +1,5 @@
 import numpy as np
+np.set_printoptions(precision=7, suppress=True, linewidth=100)
 
 def nevilles_method(x_points, y_points, x):
     matrix = np.zeros((len(x_points), len(x_points)))
@@ -17,6 +18,7 @@ def nevilles_method(x_points, y_points, x):
 def divided_difference_table(x_points, y_points):
     size = len(x_points)
     matrix = np.zeros((size, size))
+    list = []
 
     for i in range(size):
         matrix[i][0] = y_points[i]
@@ -26,25 +28,22 @@ def divided_difference_table(x_points, y_points):
             matrix[i][j] = (matrix[i][j - 1] - matrix[i - 1][j - 1]) / (x_points[i] - x_points[i - j])
 
             if i == j:
-                print(matrix[i][j])
+                list.append(matrix[i][j])
 
+    print(list)
     return matrix
 
 def get_approximate_result(matrix, x_points, value, start):
     reoccuring_x_span = 1
     reoccuring_px_result = start
     
-    # we only need the diagonals...and that starts at the first row...
     for index in range(1, len(matrix)):
         polynomial_coefficient = matrix[index][index]
 
-        # we use the previous index for x_points....
         reoccuring_x_span *= (value - x_points[index - 1])
         
-        # get a_of_x * the x_span
         mult_operation = polynomial_coefficient * reoccuring_x_span
 
-        # add the reoccuring px result
         reoccuring_px_result += mult_operation
 
     print(reoccuring_px_result)
@@ -67,6 +66,7 @@ def hermite_matrix(x_points, y_points, derivative):
             
             matrix[i][j] = (matrix[i][j - 1] - matrix[i - 1][j - 1]) / (matrix[i][0] - matrix[i - j + 1][0])
 
+    matrix = np.delete(matrix, size, 1)
     print(np.matrix(matrix))
 
 def cubic_spline_interpolation(x_points, y_points):
@@ -83,7 +83,7 @@ def cubic_spline_interpolation(x_points, y_points):
     for i in range(1, size - 1):
         matrix[i][i] = 2 * ((x_points[i + 1] - x_points[i]) + (x_points[i] - x_points[i - 1]))
 
-    print(np.matrix(matrix))
+    print(np.matrix(matrix), "\n")
 
     spline_condition = np.zeros((size))
 
@@ -92,8 +92,7 @@ def cubic_spline_interpolation(x_points, y_points):
         second_term = (3 / (x_points[i] - x_points[i - 1])) * (y_points[i] - y_points[i - 1])
         spline_condition[i] = first_term - second_term
 
-    print(np.array(spline_condition))
-
+    print(np.array(spline_condition), "\n")
     print(np.array(np.linalg.solve(matrix, spline_condition)))
 
 # Task One: use Neville's method find 2nd degree interpolating value for f(3.7)
@@ -116,3 +115,4 @@ print()
 
 # Task Five: solve following data set using cubic spline interpolation
 cubic_spline_interpolation([2, 5, 8, 10], [3, 5, 7, 9])
+print()
